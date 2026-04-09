@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Principle Appraisals — Broker Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:       #1C3554;
+  --navy-light: #254870;
+  --navy-dark:  #111F33;
+  --gold:       #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-pale:  #FDF6E3;
+  --white:      #FFFFFF;
+  --off-white:  #F7F8FA;
+  --grey-50:    #F2F4F7;
+  --grey-100:   #E4E7ED;
+  --grey-200:   #CDD2DB;
+  --grey-400:   #8E97A6;
+  --grey-600:   #4E5A6B;
+  --grey-800:   #2C3444;
+  --green:      #1A7A4A;
+  --green-bg:   #EAF7F0;
+  --amber:      #B45309;
+  --amber-bg:   #FEF3C7;
+  --red:        #B91C1C;
+  --red-bg:     #FEE2E2;
+  --blue:       #1D5FA8;
+  --blue-bg:    #EFF6FF;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 3px rgba(28,53,84,.08), 0 1px 2px rgba(28,53,84,.06);
+  --shadow:    0 4px 16px rgba(28,53,84,.10), 0 1px 4px rgba(28,53,84,.08);
+  --shadow-lg: 0 12px 40px rgba(28,53,84,.14), 0 4px 12px rgba(28,53,84,.08);
+
+  --transition: 180ms cubic-bezier(.4,0,.2,1);
+  --header-h: 64px;
+  --nav-h: 64px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--off-white);
+  color: var(--grey-800);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCREENS ────────────────────────────────────────────────── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── LOGIN SCREEN ───────────────────────────────────────────── */
+#screen-login {
+  background: linear-gradient(145deg, var(--navy-dark) 0%, var(--navy) 55%, var(--navy-light) 100%);
+  align-items: center; justify-content: center;
+  padding: 24px;
+  position: relative; overflow: hidden;
+}
+#screen-login::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(201,168,76,.12) 0%, transparent 60%),
+              radial-gradient(ellipse 50% 50% at 10% 80%, rgba(201,168,76,.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.login-card {
+  background: rgba(255,255,255,.97);
+  border-radius: var(--radius-xl);
+  padding: 48px 48px 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(201,168,76,.15);
+  position: relative; z-index: 1;
+  animation: fadeUp .5s ease both;
+}
+.login-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.login-logo-mark {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--gold); font-weight: 700;
+  flex-shrink: 0;
+}
+.login-logo-text { line-height: 1.2; }
+.login-logo-text strong {
+  display: block; font-family: var(--font-display);
+  font-size: 17px; color: var(--navy); font-weight: 700;
+}
+.login-logo-text span {
+  font-size: 11px; color: var(--grey-400);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.login-headline {
+  font-family: var(--font-display);
+  font-size: 26px; color: var(--navy);
+  margin-bottom: 6px; font-weight: 700;
+}
+.login-sub {
+  font-size: 14px; color: var(--grey-400);
+  margin-bottom: 28px;
+}
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--grey-600); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.form-input {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--grey-100);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 15px;
+  color: var(--grey-800);
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+.form-input:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(28,53,84,.10);
+}
+.btn-primary {
+  width: 100%; padding: 13px;
+  background: var(--navy);
+  color: var(--white); border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 15px; font-weight: 600;
+  cursor: pointer; letter-spacing: .02em;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+.btn-primary:hover { background: var(--navy-light); box-shadow: var(--shadow); }
+.btn-primary:active { transform: translateY(1px); }
+.login-demo {
+  margin-top: 20px; padding: 12px 14px;
+  background: var(--gold-pale);
+  border: 1px solid rgba(201,168,76,.3);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--amber);
+  line-height: 1.5;
+}
+.login-demo strong { display: block; margin-bottom: 2px; }
+
+/* ── APP SHELL ──────────────────────────────────────────────── */
+.app-header {
+  height: var(--header-h);
+  background: var(--navy);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 12px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.header-logo-mark {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: rgba(201,168,76,.15);
+  border: 1px solid rgba(201,168,76,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 16px; color: var(--gold); font-weight: 700;
+  flex-shrink: 0;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 16px; color: var(--white); font-weight: 600;
+  flex: 1; letter-spacing: .01em;
+}
+.header-user {
+  display: flex; align-items: center; gap: 8px;
+}
+.header-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--gold); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
+.header-username {
+  font-size: 13px; color: rgba(255,255,255,.7);
+  display: none;
+}
+@media(min-width:480px){ .header-username { display: block; } }
+
+/* ── BOTTOM NAV ─────────────────────────────────────────────── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--grey-100);
+  display: flex; align-items: stretch;
+  z-index: 100;
+  box-shadow: 0 -4px 16px rgba(28,53,84,.08);
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; cursor: pointer;
+  color: var(--grey-400);
+  transition: color var(--transition);
+  border: none; background: none;
+  font-family: var(--font-body);
+  padding: 0;
+  position: relative;
+}
+.nav-item::before {
+  content: ''; position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: var(--gold);
+  border-radius: 0 0 2px 2px;
+  transition: width var(--transition);
+}
+.nav-item.active { color: var(--navy); }
+.nav-item.active::before { width: 32px; }
+.nav-icon { font-size: 20px; line-height: 1; }
+.nav-label { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+
+/* ── PAGE CONTENT ───────────────────────────────────────────── */
+.page-content {
+  flex: 1;
+  padding: 20px 16px calc(var(--nav-h) + 20px);
+  max-width: 680px; margin: 0 auto; width: 100%;
+}
+@media(min-width:640px){ .page-content { padding: 28px 24px calc(var(--nav-h) + 28px); } }
+
+/* ── PAGE HEADER ────────────────────────────────────────────── */
+.page-header { margin-bottom: 24px; }
+.page-title {
+  font-family: var(--font-display);
+  font-size: 24px; color: var(--navy); font-weight: 700;
+  margin-bottom: 2px;
+}
+.page-subtitle { font-size: 14px; color: var(--grey-400); }
+
+/* ── CARDS ──────────────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--grey-50);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--grey-600); text-transform: uppercase; letter-spacing: .06em;
+  flex: 1;
+}
+.card-body { padding: 16px 20px; }
+
+/* ── STAT CARDS ─────────────────────────────────────────────── */
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--grey-400); text-transform: uppercase;
+  letter-spacing: .06em; margin-bottom: 6px;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 28px; color: var(--navy); font-weight: 700;
+  line-height: 1;
+}
+.stat-sub { font-size: 12px; color: var(--grey-400); margin-top: 4px; }
+.stat-card.gold { border-left: 3px solid var(--gold); }
+.stat-card.green { border-left: 3px solid var(--green); }
+.stat-card.blue { border-left: 3px solid var(--blue); }
+.stat-card.amber { border-left: 3px solid var(--amber); }
+
+/* ── STATUS BADGES ──────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1.4;
+  white-space: nowrap;
+}
+.badge::before { content: '●'; font-size: 8px; }
+.badge-quote    { background: var(--blue-bg);   color: var(--blue); }
+.badge-cannot   { background: var(--red-bg);    color: var(--red); }
+.badge-schedule { background: var(--amber-bg);  color: var(--amber); }
+.badge-booked   { background: #E0F2FE;          color: #0369A1; }
+.badge-progress { background: #EDE9FE;          color: #6D28D9; }
+.badge-complete { background: var(--green-bg);  color: var(--green); }
+.badge-delivered{ background: #D1FAE5;          color: #065F46; }
+.badge-revision { background: #FEE2E2;          color: #991B1B; }
+.badge-closed   { background: var(--grey-50);   color: var(--grey-400); }
+.badge-paid     { background: var(--green-bg);  color: var(--green); }
+.badge-unpaid-ns{ background: var(--grey-50);   color: var(--grey-400); }
+.badge-unpaid-s { background: var(--amber-bg);  color: var(--amber); }
+.badge-overdue  { background: var(--red-bg);    color: var(--red); }
+
+/* ── ORDER CARDS ────────────────────────────────────────────── */
+.order-list { display: flex; flex-direction: column; gap: 10px; }
+.order-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100);
+  padding: 16px 18px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.order-card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--grey-200);
+  transform: translateY(-1px);
+}
+.order-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--navy); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.order-card-body { flex: 1; min-width: 0; }
+.order-card-file {
+  font-family: var(--font-mono);
+  font-size: 13px; color: var(--grey-400);
+  margin-bottom: 2px;
+}
+.order-card-address {
+  font-size: 15px; font-weight: 600; color: var(--navy);
+  margin-bottom: 6px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.order-card-meta {
+  display: flex; align-items: center;
+  flex-wrap: wrap; gap: 6px;
+}
+.order-card-chevron {
+  color: var(--grey-200); font-size: 18px;
+  flex-shrink: 0; align-self: center;
+}
+.group-label {
+  font-size: 11px; font-weight: 700; color: var(--grey-400);
+  text-transform: uppercase; letter-spacing: .08em;
+  padding: 8px 4px 4px;
+}
+
+/* ── FORM STYLES ────────────────────────────────────────────── */
+.form-section {
+  margin-bottom: 8px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100);
+  background: var(--white);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.form-section-header {
+  padding: 12px 18px;
+  background: var(--navy);
+  display: flex; align-items: center; gap: 8px;
+}
+.form-section-title {
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,.9); text-transform: uppercase; letter-spacing: .08em;
+}
+.form-section-icon { font-size: 15px; }
+.form-section-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-label {
+  font-size: 12px; font-weight: 600; color: var(--grey-600);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.form-label .required { color: var(--red); margin-left: 2px; }
+.form-input, .form-select, .form-textarea {
+  padding: 10px 13px;
+  border: 1.5px solid var(--grey-100);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 15px;
+  color: var(--grey-800); background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none; width: 100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(28,53,84,.09);
+}
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238E97A6' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+.form-input.hidden-field { display: none; }
+.checkbox-group {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px;
+  background: var(--gold-pale);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: var(--radius-sm);
+}
+.checkbox-group input[type="checkbox"] {
+  width: 18px; height: 18px; cursor: pointer;
+  accent-color: var(--navy); flex-shrink: 0; margin-top: 2px;
+}
+.checkbox-label {
+  font-size: 13px; color: var(--grey-600);
+  cursor: pointer; line-height: 1.5;
+}
+.form-submit-area {
+  padding: 20px 0 8px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.btn-submit {
+  width: 100%; padding: 14px;
+  background: var(--navy); color: var(--white);
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 16px; font-weight: 600;
+  cursor: pointer; letter-spacing: .02em;
+  transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-submit:hover { background: var(--navy-light); box-shadow: var(--shadow); }
+.btn-submit:active { transform: translateY(1px); }
+.btn-submit:disabled { background: var(--grey-200); cursor: not-allowed; }
+.btn-secondary {
+  width: 100%; padding: 11px;
+  background: transparent; color: var(--grey-400);
+  border: 1.5px solid var(--grey-100); border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+.btn-secondary:hover { border-color: var(--navy); color: var(--navy); }
+
+/* ── FILE DETAIL ─────────────────────────────────────────────── */
+.detail-hero {
+  background: var(--navy);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 14px;
+  position: relative; overflow: hidden;
+}
+.detail-hero::before {
+  content: '';
+  position: absolute; top: -20px; right: -20px;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: rgba(201,168,76,.08);
+  pointer-events: none;
+}
+.detail-file-num {
+  font-family: var(--font-mono);
+  font-size: 13px; color: rgba(255,255,255,.5);
+  margin-bottom: 4px;
+}
+.detail-address {
+  font-family: var(--font-display);
+  font-size: 20px; color: var(--white); font-weight: 700;
+  margin-bottom: 10px; line-height: 1.3;
+}
+.detail-badges {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 14px;
+}
+.detail-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.action-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 13px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: var(--radius-sm);
+  color: var(--white); font-size: 13px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: background var(--transition);
+  font-family: var(--font-body);
+}
+.action-btn:hover { background: rgba(255,255,255,.22); }
+
+.detail-section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100);
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.detail-section-header {
+  padding: 12px 16px;
+  background: var(--grey-50);
+  border-bottom: 1px solid var(--grey-100);
+  display: flex; align-items: center; gap: 8px;
+}
+.detail-section-title {
+  font-size: 12px; font-weight: 700;
+  color: var(--grey-600); text-transform: uppercase; letter-spacing: .08em;
+}
+.detail-row {
+  display: flex; align-items: flex-start;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--grey-50);
+  gap: 12px;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row-label {
+  font-size: 12px; font-weight: 600; color: var(--grey-400);
+  text-transform: uppercase; letter-spacing: .05em;
+  width: 130px; flex-shrink: 0; padding-top: 1px;
+}
+.detail-row-value {
+  font-size: 14px; color: var(--grey-800); flex: 1;
+}
+.detail-row-value a {
+  color: var(--navy); text-decoration: none; font-weight: 500;
+}
+.detail-row-value a:hover { text-decoration: underline; }
+
+.appt-banner {
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--blue-bg), #DBEAFE);
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radius-lg);
+  display: flex; align-items: center; gap: 12px;
+}
+.appt-icon { font-size: 24px; }
+.appt-info { flex: 1; }
+.appt-label { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .06em; }
+.appt-date { font-size: 16px; font-weight: 700; color: var(--navy); }
+
+.notes-area {
+  padding: 16px;
+}
+.notes-textarea {
+  width: 100%; padding: 10px 13px;
+  border: 1.5px solid var(--grey-100);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 14px;
+  color: var(--grey-800); resize: vertical; min-height: 80px;
+  outline: none; transition: border-color var(--transition);
+}
+.notes-textarea:focus { border-color: var(--navy); }
+.btn-save-note {
+  margin-top: 8px; padding: 9px 18px;
+  background: var(--navy); color: var(--white);
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer;
+}
+.activity-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--grey-50);
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0; margin-top: 5px;
+}
+.activity-text { font-size: 13px; color: var(--grey-800); line-height: 1.4; }
+.activity-time { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+
+/* ── RESOURCES ──────────────────────────────────────────────── */
+.resource-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100);
+  padding: 18px 20px;
+  display: flex; align-items: flex-start; gap: 14px;
+  cursor: pointer; text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+  margin-bottom: 10px;
+}
+.resource-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.resource-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--navy); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.resource-body { flex: 1; }
+.resource-title {
+  font-size: 15px; font-weight: 600; color: var(--navy);
+  margin-bottom: 3px;
+}
+.resource-desc { font-size: 13px; color: var(--grey-400); }
+
+.contact-card {
+  background: var(--navy);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-top: 16px;
+}
+.contact-card-title {
+  font-family: var(--font-display);
+  font-size: 17px; color: var(--white); font-weight: 600;
+  margin-bottom: 14px;
+}
+.contact-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.contact-row:last-child { margin-bottom: 0; }
+.contact-icon { font-size: 16px; }
+.contact-link {
+  color: rgba(255,255,255,.8); text-decoration: none;
+  font-size: 14px; transition: color var(--transition);
+}
+.contact-link:hover { color: var(--gold); }
+
+/* ── SUCCESS TOAST ──────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: calc(var(--nav-h) + 16px); left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--grey-800); color: var(--white);
+  padding: 12px 20px; border-radius: 999px;
+  font-size: 14px; font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  opacity: 0; transition: opacity .3s, transform .3s;
+  pointer-events: none; z-index: 200; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── SUCCESS SCREEN ─────────────────────────────────────────── */
+.success-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(28,53,84,.6); z-index: 300;
+  align-items: center; justify-content: center;
+  padding: 24px;
+}
+.success-overlay.show { display: flex; }
+.success-card {
+  background: var(--white); border-radius: var(--radius-xl);
+  padding: 40px 32px; text-align: center;
+  max-width: 360px; width: 100%;
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+.success-icon { font-size: 52px; margin-bottom: 16px; }
+.success-title {
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--navy); font-weight: 700;
+  margin-bottom: 8px;
+}
+.success-msg { font-size: 14px; color: var(--grey-400); margin-bottom: 6px; }
+.success-file {
+  font-family: var(--font-mono);
+  font-size: 18px; color: var(--navy); font-weight: 700;
+  background: var(--gold-pale); padding: 8px 16px;
+  border-radius: var(--radius-sm); display: inline-block;
+  margin: 10px 0 20px;
+}
+.btn-close-success {
+  width: 100%; padding: 12px;
+  background: var(--navy); color: var(--white);
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 15px; font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── CONFIG BANNER ──────────────────────────────────────────── */
+.config-banner {
+  background: var(--amber-bg);
+  border: 1px solid rgba(180,83,9,.2);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px; color: var(--amber);
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.config-banner strong { font-weight: 700; }
+
+/* ── SEARCH ─────────────────────────────────────────────────── */
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--white);
+  border: 1.5px solid var(--grey-100);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.search-icon { color: var(--grey-400); font-size: 16px; }
+.search-input {
+  flex: 1; border: none; outline: none;
+  font-family: var(--font-body); font-size: 15px;
+  color: var(--grey-800); background: transparent;
+}
+.search-input::placeholder { color: var(--grey-200); }
+
+/* ── EMPTY STATE ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+}
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 18px; color: var(--navy); margin-bottom: 6px;
+}
+.empty-msg { font-size: 14px; color: var(--grey-400); }
+
+/* ── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.fade-in { animation: fadeUp .3s ease both; }
+
+/* ── BACK BUTTON ─────────────────────────────────────────────── */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--grey-400); font-size: 14px; font-weight: 500;
+  cursor: pointer; margin-bottom: 16px;
+  background: none; border: none; font-family: var(--font-body);
+  padding: 0; transition: color var(--transition);
+}
+.back-btn:hover { color: var(--navy); }
+
+/* ── ENDPOINT SETUP ──────────────────────────────────────────── */
+.setup-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1px solid var(--grey-100); padding: 20px;
+  margin-bottom: 16px; box-shadow: var(--shadow-sm);
+}
+.setup-title {
+  font-family: var(--font-display);
+  font-size: 16px; color: var(--navy); font-weight: 600;
+  margin-bottom: 6px;
+}
+.setup-desc { font-size: 13px; color: var(--grey-400); margin-bottom: 14px; line-height: 1.6; }
+.setup-input-row { display: flex; gap: 8px; }
+.setup-input {
+  flex: 1; padding: 9px 12px;
+  border: 1.5px solid var(--grey-100); border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 13px; outline: none;
+  transition: border-color var(--transition);
+}
+.setup-input:focus { border-color: var(--navy); }
+.btn-setup {
+  padding: 9px 16px;
+  background: var(--navy); color: var(--white);
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">P</div>
+      <div class="login-logo-text">
+        <strong>Principle Appraisals</strong>
+        <span>Broker Portal</span>
+      </div>
+    </div>
+    <h1 class="login-headline">Welcome back</h1>
+    <p class="login-sub">Sign in to manage your appraisal orders</p>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" id="login-email" class="form-input" placeholder="broker@yourbrokerage.com" value="sarah.johnson@abcrealty.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="login-password" class="form-input" placeholder="••••••••" value="demo1234">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In to Portal</button>
+
+    <div class="login-demo">
+      <strong>🎯 Demo Mode Active</strong>
+      Email and password are pre-filled. Click Sign In to explore the portal with sample data.
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══════════════════════════════════════════════ -->
+<div id="screen-app" class="screen">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-logo-mark">P</div>
+    <div class="header-title">Principle Appraisals</div>
+    <div class="header-user">
+      <span class="header-username" id="header-username"></span>
+      <div class="header-avatar" id="header-avatar">SJ</div>
+    </div>
+  </header>
+
+  <!-- Screens inside app -->
+  <div id="view-home"      class="page-content fade-in" style="display:none"></div>
+  <div id="view-neworder"  class="page-content fade-in" style="display:none"></div>
+  <div id="view-orders"    class="page-content fade-in" style="display:none"></div>
+  <div id="view-detail"    class="page-content fade-in" style="display:none"></div>
+  <div id="view-resources" class="page-content fade-in" style="display:none"></div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="home" onclick="switchView('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" data-view="neworder" onclick="switchView('neworder')">
+      <span class="nav-icon">➕</span>
+      <span class="nav-label">New Order</span>
+    </button>
+    <button class="nav-item" data-view="orders" onclick="switchView('orders')">
+      <span class="nav-icon">📋</span>
+      <span class="nav-label">My Orders</span>
+    </button>
+    <button class="nav-item" data-view="resources" onclick="switchView('resources')">
+      <span class="nav-icon">ℹ️</span>
+      <span class="nav-label">Resources</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ══ SUCCESS OVERLAY ═══════════════════════════════════════ -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Order Submitted!</div>
+    <div class="success-msg">Your appraisal order has been received. Your file number is:</div>
+    <div class="success-file" id="success-file-num">PA26-00001</div>
+    <div class="success-msg">You'll receive a confirmation email shortly. We'll be in touch to arrange the appointment.</div>
+    <button class="btn-close-success" onclick="closeSuccess()">View My Orders</button>
+  </div>
+</div>
+
+<!-- ══ TOAST ═════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA STORE ───────────────────────────────────────────────
+const SHEETS_ENDPOINT_KEY = 'pa_sheets_endpoint';
+let sheetsEndpoint = localStorage.getItem(SHEETS_ENDPOINT_KEY) || '';
+
+let currentUser = { name: 'Sarah Johnson', email: 'sarah.johnson@abcrealty.com', initials: 'SJ', company: 'ABC Realty' };
+let currentView = 'home';
+let selectedOrderId = null;
+
+// Demo orders — broker sees only their own
+let orders = [
+  {
+    id: 1, fileNum: 'PA26-00001', brokerEmail: 'sarah.johnson@abcrealty.com',
+    status: 'Appointment Scheduled', paymentStatus: 'Unpaid – Invoice Not Sent',
+    appraisalType: 'Mortgage Financing Appraisal', intendedUser: 'Lender',
+    mortgagePosition: 'First', ltv: '75', estValue: '650000',
+    streetNum: '123', streetName: 'Maple', streetType: 'St', city: 'London', province: 'ON', postal: 'N6A 1A1',
+    borrower1First: 'Jane', borrower1Last: 'Smith', borrower2First: '', borrower2Last: '',
+    contact1Name: 'Jane Smith', contact1Phone: '519-555-0100', contact1Email: 'jane@email.com',
+    contact2Name: '', contact2Phone: '', contact2Email: '',
+    amc: 'FNF', amcSub: 'Progressive', lender: 'TD', lenderFile: 'TD-2026-0001',
+    apptDate: '2026-03-15', apptTime: '10:00 AM',
+    invoiceNum: '', invoiceDate: '', paymentDate: '',
+    driveLink: '', notes: 'Access via front door. Dog on premises.',
+    submissionDate: '2026-03-10',
+    activities: [
+      { text: 'Order received and confirmed', time: 'Mar 10, 2026 · 9:14 AM', type: 'system' },
+      { text: 'Confirmation email sent to broker', time: 'Mar 10, 2026 · 9:14 AM', type: 'auto' },
+      { text: 'Appointment scheduled for Mar 15 @ 10:00 AM', time: 'Mar 11, 2026 · 2:30 PM', type: 'admin' },
+      { text: 'Appointment confirmation email sent to broker and homeowner', time: 'Mar 11, 2026 · 2:31 PM', type: 'auto' },
+    ]
+  },
+  {
+    id: 2, fileNum: 'PA26-00003', brokerEmail: 'sarah.johnson@abcrealty.com',
+    status: 'Request for Quote', paymentStatus: 'Unpaid – Invoice Not Sent',
+    appraisalType: 'Mortgage Financing Appraisal', intendedUser: 'Lender',
+    mortgagePosition: 'Second', ltv: '60', estValue: '480000',
+    streetNum: '88', streetName: 'Wellington', streetType: 'Rd', city: 'London', province: 'ON', postal: 'N6B 2N4',
+    borrower1First: 'Michael', borrower1Last: 'Chen', borrower2First: 'Lisa', borrower2Last: 'Chen',
+    contact1Name: 'Michael Chen', contact1Phone: '519-555-0218', contact1Email: 'mchen@email.com',
+    contact2Name: '', contact2Phone: '', contact2Email: '',
+    amc: 'SOLIDIFI', amcSub: '', lender: 'RBC', lenderFile: '',
+    apptDate: '', apptTime: '',
+    invoiceNum: '', invoiceDate: '', paymentDate: '',
+    driveLink: '', notes: '',
+    submissionDate: '2026-03-11',
+    activities: [
+      { text: 'Order received and confirmed', time: 'Mar 11, 2026 · 8:52 AM', type: 'system' },
+      { text: 'Confirmation email sent to broker', time: 'Mar 11, 2026 · 8:52 AM', type: 'auto' },
+    ]
+  },
+  {
+    id: 3, fileNum: 'PA26-00005', brokerEmail: 'sarah.johnson@abcrealty.com',
+    status: 'Completed & Delivered', paymentStatus: 'Paid',
+    appraisalType: 'Estate Appraisal', intendedUser: 'Current Owner',
+    mortgagePosition: '', ltv: '', estValue: '720000',
+    streetNum: '45', streetName: 'Ridout', streetType: 'St', city: 'London', province: 'ON', postal: 'N6A 2M9',
+    borrower1First: 'Robert', borrower1Last: 'Wallace', borrower2First: '', borrower2Last: '',
+    contact1Name: 'Robert Wallace', contact1Phone: '519-555-0344', contact1Email: 'rwallace@email.com',
+    contact2Name: '', contact2Phone: '', contact2Email: '',
+    amc: 'PRIVATE', amcSub: '', lender: '', lenderFile: '',
+    apptDate: '2026-02-28', apptTime: '2:00 PM',
+    invoiceNum: 'QB-2026-0042', invoiceDate: '2026-03-05', paymentDate: '2026-03-08',
+    driveLink: 'https://drive.google.com',
+    notes: 'Estate appraisal — executor is primary contact.',
+    submissionDate: '2026-02-20',
+    activities: [
+      { text: 'Order received', time: 'Feb 20, 2026 · 10:00 AM', type: 'system' },
+      { text: 'Appointment scheduled for Feb 28 @ 2:00 PM', time: 'Feb 21, 2026 · 11:00 AM', type: 'admin' },
+      { text: 'Site visit completed', time: 'Feb 28, 2026 · 4:15 PM', type: 'admin' },
+      { text: 'Report completed and delivered', time: 'Mar 5, 2026 · 9:00 AM', type: 'admin' },
+      { text: 'Invoice QB-2026-0042 sent', time: 'Mar 5, 2026 · 9:01 AM', type: 'auto' },
+      { text: 'Payment received', time: 'Mar 8, 2026 · 2:44 PM', type: 'admin' },
+    ]
+  }
+];
+
+let nextOrderNum = 6;
+
+// ── STATUS HELPERS ───────────────────────────────────────────
+function statusBadgeClass(status) {
+  const map = {
+    'Request for Quote': 'badge-quote',
+    'Cannot Quote': 'badge-cannot',
+    'To Schedule Appointment': 'badge-schedule',
+    'Appointment Scheduled': 'badge-booked',
+    'Appraisal Report In Progress': 'badge-progress',
+    'Completed – Not Submitted to Lender': 'badge-complete',
+    'Completed – Submitted to Lender': 'badge-complete',
+    'Completed & Delivered': 'badge-delivered',
+    'Revision Requested': 'badge-revision',
+    'File Closed': 'badge-closed',
+  };
+  return map[status] || 'badge-quote';
+}
+
+function paymentBadgeClass(status) {
+  if (status === 'Paid') return 'badge-paid';
+  if (status === 'Unpaid – Invoice Sent') return 'badge-unpaid-s';
+  if (status === 'Overdue') return 'badge-overdue';
+  return 'badge-unpaid-ns';
+}
+
+function statusIcon(status) {
+  const map = {
+    'Request for Quote': '🔍',
+    'Cannot Quote': '❌',
+    'To Schedule Appointment': '📅',
+    'Appointment Scheduled': '📆',
+    'Appraisal Report In Progress': '✍️',
+    'Completed – Not Submitted to Lender': '✅',
+    'Completed – Submitted to Lender': '📤',
+    'Completed & Delivered': '🎉',
+    'Revision Requested': '🔄',
+    'File Closed': '🗂️',
+  };
+  return map[status] || '📋';
+}
+
+function formatCurrency(val) {
+  if (!val) return '—';
+  return '$' + Number(val).toLocaleString();
+}
+
+function formatDate(val) {
+  if (!val) return '—';
+  return val;
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const name = email.split('@')[0].split('.').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+  const initials = name.split(' ').map(w => w[0]).join('').slice(0,2);
+  currentUser = { name, email, initials, company: email.split('@')[1] };
+
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  document.getElementById('header-username').textContent = currentUser.name;
+  document.getElementById('header-avatar').textContent = initials;
+
+  switchView('home');
+}
+
+function switchView(view, orderId = null) {
+  ['home','neworder','orders','detail','resources'].forEach(v => {
+    document.getElementById('view-'+v).style.display = 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+
+  const target = view === 'detail' ? 'orders' : view;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    if (view === 'detail') el.classList.toggle('active', el.dataset.view === 'orders');
+  });
+
+  currentView = view;
+  const el = document.getElementById('view-'+view);
+  el.style.display = 'block';
+  el.scrollTop = 0;
+
+  if (view === 'home')      renderHome();
+  if (view === 'neworder')  renderNewOrder();
+  if (view === 'orders')    renderOrders();
+  if (view === 'detail')    renderDetail(orderId);
+  if (view === 'resources') renderResources();
+}
+
+// ── HOME ─────────────────────────────────────────────────────
+function renderHome() {
+  const myOrders = orders.filter(o => o.brokerEmail === currentUser.email);
+  const active = myOrders.filter(o => !['File Closed','Completed & Delivered'].includes(o.status)).length;
+  const pending = myOrders.filter(o => o.status === 'Request for Quote').length;
+  const delivered = myOrders.filter(o => o.status === 'Completed & Delivered').length;
+  const unpaid = myOrders.filter(o => o.paymentStatus !== 'Paid' && ['Completed & Delivered','File Closed'].includes(o.status)).length;
+
+  const recent = [...myOrders].sort((a,b) => new Date(b.submissionDate)-new Date(a.submissionDate)).slice(0,3);
+
+  document.getElementById('view-home').innerHTML = `
+    <div class="page-header">
+      <div class="page-title">Good morning, ${currentUser.name.split(' ')[0]}</div>
+      <div class="page-subtitle">${currentUser.company} · ${new Date().toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'})}</div>
+    </div>
+
+    ${!sheetsEndpoint ? `
+    <div class="config-banner">
+      <span>⚙️</span>
+      <span><strong>Demo Mode:</strong> Data is stored locally. Connect your Google Sheet in Resources → Setup to enable live data sync.</span>
+    </div>` : ''}
+
+    <div class="stats-grid">
+      <div class="stat-card gold">
+        <div class="stat-label">Active Orders</div>
+        <div class="stat-value">${active}</div>
+        <div class="stat-sub">currently in progress</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Awaiting Quote</div>
+        <div class="stat-value">${pending}</div>
+        <div class="stat-sub">pending review</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Delivered</div>
+        <div class="stat-value">${delivered}</div>
+        <div class="stat-sub">completed orders</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Unpaid</div>
+        <div class="stat-value">${unpaid}</div>
+        <div class="stat-sub">outstanding invoices</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <span style="font-size:16px">🕐</span>
+        <span class="card-title">Recent Orders</span>
+        <button onclick="switchView('orders')" style="font-size:13px;color:var(--navy);background:none;border:none;cursor:pointer;font-weight:600">View All →</button>
+      </div>
+      <div>
+        ${recent.map(o => `
+          <div class="detail-row" style="cursor:pointer" onclick="switchView('detail',${o.id})">
+            <div style="flex:1;min-width:0">
+              <div style="font-family:var(--font-mono);font-size:12px;color:var(--grey-400)">${o.fileNum}</div>
+              <div style="font-size:14px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.streetNum} ${o.streetName} ${o.streetType}, ${o.city}</div>
+              <div style="margin-top:4px"><span class="badge ${statusBadgeClass(o.status)}">${o.status}</span></div>
+            </div>
+            <div style="color:var(--grey-200);font-size:18px">›</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span style="font-size:16px">⚡</span>
+        <span class="card-title">Quick Actions</span>
+      </div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onclick="switchView('neworder')" style="padding:12px;background:var(--navy);color:var(--white);border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer">➕ New Order</button>
+        <button onclick="switchView('orders')" style="padding:12px;background:var(--grey-50);color:var(--navy);border:1px solid var(--grey-100);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer">📋 My Orders</button>
+      </div>
+    </div>
+  `;
+}
+
+// ── NEW ORDER FORM ───────────────────────────────────────────
+function renderNewOrder() {
+  document.getElementById('view-neworder').innerHTML = `
+    <div class="page-header">
+      <div class="page-title">New Order</div>
+      <div class="page-subtitle">Submit an appraisal order to Principle Appraisals</div>
+    </div>
+
+    <form id="order-form" onsubmit="submitOrder(event)">
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">📋</span>
+          <span class="form-section-title">Appraisal Details</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-group full">
+            <label class="form-label">Type of Appraisal <span class="required">*</span></label>
+            <select class="form-select" id="f-appraisalType" required onchange="toggleMortgageFields()">
+              <option value="">— Select —</option>
+              <option>Mortgage Financing Appraisal</option>
+              <option>Asset Division / Divorce Appraisal</option>
+              <option>Estate Appraisal</option>
+              <option>Real Estate Purchase Price Evaluation</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Intended User <span class="required">*</span></label>
+            <select class="form-select" id="f-intendedUser" required>
+              <option value="">— Select —</option>
+              <option>Lender</option>
+              <option>Purchaser</option>
+              <option>Current Owner</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div id="mortgage-fields" style="display:none;display:flex;flex-direction:column;gap:14px">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Mortgage Position</label>
+                <select class="form-select" id="f-mortgagePosition">
+                  <option value="">— Select —</option>
+                  <option>First</option><option>Second</option><option>Third</option><option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Approx LTV (%)</label>
+                <input type="number" class="form-input" id="f-ltv" placeholder="e.g. 75" min="1" max="100">
+              </div>
+            </div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Estimated Property Value <span class="required">*</span></label>
+            <input type="number" class="form-input" id="f-estValue" placeholder="e.g. 650000" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">🏠</span>
+          <span class="form-section-title">Property Address</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Street # <span class="required">*</span></label>
+              <input type="text" class="form-input" id="f-streetNum" required placeholder="e.g. 123">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Street Name <span class="required">*</span></label>
+              <input type="text" class="form-input" id="f-streetName" required placeholder="e.g. Maple">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Street Type</label>
+              <input type="text" class="form-input" id="f-streetType" placeholder="St / Ave / Blvd">
+            </div>
+            <div class="form-group">
+              <label class="form-label">City <span class="required">*</span></label>
+              <input type="text" class="form-input" id="f-city" required placeholder="e.g. London">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Province <span class="required">*</span></label>
+              <select class="form-select" id="f-province" required>
+                <option value="">—</option>
+                <option>AB</option><option>BC</option><option>MB</option><option>NB</option>
+                <option>NL</option><option>NS</option><option>ON</option><option>PE</option>
+                <option>QC</option><option>SK</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Postal Code <span class="required">*</span></label>
+              <input type="text" class="form-input" id="f-postal" required placeholder="N6A 1A1">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">👤</span>
+          <span class="form-section-title">Applicants</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Borrower 1 First <span class="required">*</span></label>
+              <input type="text" class="form-input" id="f-b1first" required placeholder="First name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Borrower 1 Last <span class="required">*</span></label>
+              <input type="text" class="form-input" id="f-b1last" required placeholder="Last name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Borrower 2 First</label>
+              <input type="text" class="form-input" id="f-b2first" placeholder="First name (optional)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Borrower 2 Last</label>
+              <input type="text" class="form-input" id="f-b2last" placeholder="Last name (optional)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">📞</span>
+          <span class="form-section-title">Contact Information</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-group full">
+            <label class="form-label">Contact 1 Name <span class="required">*</span></label>
+            <input type="text" class="form-input" id="f-c1name" required placeholder="Person to contact for property access">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Contact 1 Phone <span class="required">*</span></label>
+              <input type="tel" class="form-input" id="f-c1phone" required placeholder="519-555-0100">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact 1 Email <span class="required">*</span></label>
+              <input type="email" class="form-input" id="f-c1email" required placeholder="contact@email.com">
+            </div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Contact 2 Name</label>
+            <input type="text" class="form-input" id="f-c2name" placeholder="Optional second contact">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Contact 2 Phone</label>
+              <input type="tel" class="form-input" id="f-c2phone" placeholder="Optional">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact 2 Email</label>
+              <input type="email" class="form-input" id="f-c2email" placeholder="Optional">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-header">
+          <span class="form-section-icon">📝</span>
+          <span class="form-section-title">Notes & Legal</span>
+        </div>
+        <div class="form-section-body">
+          <div class="form-group full">
+            <label class="form-label">Notes</label>
+            <textarea class="form-textarea" id="f-notes" placeholder="Access instructions, key box info, or anything the appraiser should know…"></textarea>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="f-loe" required>
+            <label class="checkbox-label" for="f-loe">
+              <strong>Letter of Engagement — </strong>I acknowledge that I have read and agree to the terms of the Letter of Engagement with Principle Appraisals. I confirm that the information provided is accurate and I am authorized to request this appraisal.
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-submit-area">
+        <button type="submit" class="btn-submit">
+          📤 Submit Order
+        </button>
+        <button type="button" class="btn-secondary" onclick="switchView('home')">Cancel</button>
+      </div>
+    </form>
+  `;
+  toggleMortgageFields();
+}
+
+function toggleMortgageFields() {
+  const type = document.getElementById('f-appraisalType')?.value;
+  const mf = document.getElementById('mortgage-fields');
+  if (mf) mf.style.display = type === 'Mortgage Financing Appraisal' ? 'flex' : 'none';
+}
+
+function submitOrder(e) {
+  e.preventDefault();
+  const fileNum = `PA26-0000${nextOrderNum}`;
+  const newOrder = {
+    id: Date.now(), fileNum,
+    brokerEmail: currentUser.email,
+    status: 'Request for Quote',
+    paymentStatus: 'Unpaid – Invoice Not Sent',
+    appraisalType: document.getElementById('f-appraisalType').value,
+    intendedUser: document.getElementById('f-intendedUser').value,
+    mortgagePosition: document.getElementById('f-mortgagePosition')?.value || '',
+    ltv: document.getElementById('f-ltv')?.value || '',
+    estValue: document.getElementById('f-estValue').value,
+    streetNum: document.getElementById('f-streetNum').value,
+    streetName: document.getElementById('f-streetName').value,
+    streetType: document.getElementById('f-streetType').value,
+    city: document.getElementById('f-city').value,
+    province: document.getElementById('f-province').value,
+    postal: document.getElementById('f-postal').value,
+    borrower1First: document.getElementById('f-b1first').value,
+    borrower1Last: document.getElementById('f-b1last').value,
+    borrower2First: document.getElementById('f-b2first').value,
+    borrower2Last: document.getElementById('f-b2last').value,
+    contact1Name: document.getElementById('f-c1name').value,
+    contact1Phone: document.getElementById('f-c1phone').value,
+    contact1Email: document.getElementById('f-c1email').value,
+    contact2Name: document.getElementById('f-c2name').value,
+    contact2Phone: document.getElementById('f-c2phone').value,
+    contact2Email: document.getElementById('f-c2email').value,
+    amc: '', amcSub: '', lender: '', lenderFile: '',
+    apptDate: '', apptTime: '',
+    invoiceNum: '', invoiceDate: '', paymentDate: '',
+    driveLink: '',
+    notes: document.getElementById('f-notes').value,
+    submissionDate: new Date().toISOString().split('T')[0],
+    activities: [
+      { text: 'Order received and confirmed', time: new Date().toLocaleString(), type: 'system' },
+      { text: 'Confirmation email sent to broker', time: new Date().toLocaleString(), type: 'auto' },
+    ]
+  };
+
+  orders.push(newOrder);
+  nextOrderNum++;
+
+  if (sheetsEndpoint) {
+    fetch(sheetsEndpoint, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder)
+    }).catch(() => {});
+  }
+
+  document.getElementById('success-file-num').textContent = fileNum;
+  document.getElementById('success-overlay').classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('success-overlay').classList.remove('show');
+  switchView('orders');
+}
+
+// ── MY ORDERS ────────────────────────────────────────────────
+function renderOrders(searchTerm = '') {
+  const myOrders = orders.filter(o => o.brokerEmail === currentUser.email);
+  const filtered = searchTerm
+    ? myOrders.filter(o =>
+        o.fileNum.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        o.streetName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        o.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        o.borrower1Last.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : myOrders;
+
+  const sorted = [...filtered].sort((a,b) => new Date(b.submissionDate) - new Date(a.submissionDate));
+
+  const groups = {};
+  sorted.forEach(o => {
+    if (!groups[o.status]) groups[o.status] = [];
+    groups[o.status].push(o);
+  });
+
+  const statusOrder = [
+    'Request for Quote','To Schedule Appointment','Appointment Scheduled',
+    'Appraisal Report In Progress','Cannot Quote','Completed – Not Submitted to Lender',
+    'Completed – Submitted to Lender','Completed & Delivered','Revision Requested','File Closed'
+  ];
+
+  let html = `
+    <div class="page-header">
+      <div class="page-title">My Orders</div>
+      <div class="page-subtitle">${sorted.length} order${sorted.length!==1?'s':''} found</div>
+    </div>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" placeholder="Search by file #, address, or name…"
+        value="${searchTerm}"
+        oninput="renderOrders(this.value)">
+    </div>
+  `;
+
+  if (sorted.length === 0) {
+    html += `
+      <div class="empty-state">
+        <div class="empty-icon">${searchTerm ? '🔍' : '📭'}</div>
+        <div class="empty-title">${searchTerm ? 'No results found' : 'No orders yet'}</div>
+        <div class="empty-msg">${searchTerm ? 'Try a different search term.' : 'Submit your first appraisal order to get started.'}</div>
+      </div>`;
+  } else {
+    statusOrder.forEach(status => {
+      if (!groups[status]) return;
+      html += `<div class="group-label">${status} (${groups[status].length})</div><div class="order-list">`;
+      groups[status].forEach(o => {
+        html += `
+          <div class="order-card" onclick="switchView('detail',${o.id})">
+            <div class="order-card-icon">${statusIcon(o.status)}</div>
+            <div class="order-card-body">
+              <div class="order-card-file">${o.fileNum}</div>
+              <div class="order-card-address">${o.streetNum} ${o.streetName} ${o.streetType}, ${o.city}</div>
+              <div class="order-card-meta">
+                <span class="badge ${statusBadgeClass(o.status)}">${o.status}</span>
+                ${o.apptDate ? `<span style="font-size:12px;color:var(--grey-400)">📅 ${o.apptDate}</span>` : ''}
+              </div>
+            </div>
+            <div class="order-card-chevron">›</div>
+          </div>`;
+      });
+      html += `</div><div style="height:6px"></div>`;
+    });
+  }
+
+  document.getElementById('view-orders').innerHTML = html;
+}
+
+// ── FILE DETAIL ──────────────────────────────────────────────
+function renderDetail(orderId) {
+  const o = orders.find(x => x.id == orderId);
+  if (!o) { switchView('orders'); return; }
+  selectedOrderId = orderId;
+
+  const address = `${o.streetNum} ${o.streetName} ${o.streetType}`;
+  const fullAddress = `${address}, ${o.city}, ${o.province}  ${o.postal}`;
+
+  document.getElementById('view-detail').innerHTML = `
+    <button class="back-btn" onclick="switchView('orders')">‹ Back to My Orders</button>
+
+    <div class="detail-hero">
+      <div class="detail-file-num">${o.fileNum} · Submitted ${o.submissionDate}</div>
+      <div class="detail-address">${address}<br><span style="font-size:15px;font-weight:400;opacity:.75">${o.city}, ${o.province}  ${o.postal}</span></div>
+      <div class="detail-badges">
+        <span class="badge ${statusBadgeClass(o.status)}">${o.status}</span>
+        <span class="badge ${paymentBadgeClass(o.paymentStatus)}">${o.paymentStatus}</span>
+      </div>
+      <div class="detail-actions">
+        ${o.contact1Phone ? `<a class="action-btn" href="tel:${o.contact1Phone}">📞 Call</a>` : ''}
+        ${o.contact1Email ? `<a class="action-btn" href="mailto:${o.contact1Email}">📧 Email</a>` : ''}
+        ${o.driveLink ? `<a class="action-btn" href="${o.driveLink}" target="_blank">📁 Drive</a>` : ''}
+      </div>
+    </div>
+
+    ${o.apptDate ? `
+    <div class="appt-banner">
+      <div class="appt-icon">📅</div>
+      <div class="appt-info">
+        <div class="appt-label">Appointment Scheduled</div>
+        <div class="appt-date">${o.apptDate}${o.apptTime ? ' · ' + o.apptTime : ''}</div>
+      </div>
+    </div>` : ''}
+
+    <div class="detail-section">
+      <div class="detail-section-header"><span>📋</span><span class="detail-section-title">Order Details</span></div>
+      <div class="detail-row"><div class="detail-row-label">Appraisal Type</div><div class="detail-row-value">${o.appraisalType||'—'}</div></div>
+      <div class="detail-row"><div class="detail-row-label">Intended User</div><div class="detail-row-value">${o.intendedUser||'—'}</div></div>
+      ${o.mortgagePosition ? `<div class="detail-row"><div class="detail-row-label">Mortgage Position</div><div class="detail-row-value">${o.mortgagePosition}</div></div>` : ''}
+      ${o.ltv ? `<div class="detail-row"><div class="detail-row-label">LTV</div><div class="detail-row-value">${o.ltv}%</div></div>` : ''}
+      <div class="detail-row"><div class="detail-row-label">Est. Value</div><div class="detail-row-value">${formatCurrency(o.estValue)}</div></div>
+      ${o.amc ? `<div class="detail-row"><div class="detail-row-label">AMC</div><div class="detail-row-value">${o.amc}${o.amcSub ? ' · ' + o.amcSub : ''}</div></div>` : ''}
+      ${o.lender ? `<div class="detail-row"><div class="detail-row-label">Lender</div><div class="detail-row-value">${o.lender}${o.lenderFile ? ' · ' + o.lenderFile : ''}</div></div>` : ''}
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-header"><span>👤</span><span class="detail-section-title">Applicants & Contacts</span></div>
+      <div class="detail-row"><div class="detail-row-label">Borrower 1</div><div class="detail-row-value">${o.borrower1First} ${o.borrower1Last}</div></div>
+      ${o.borrower2First ? `<div class="detail-row"><div class="detail-row-label">Borrower 2</div><div class="detail-row-value">${o.borrower2First} ${o.borrower2Last}</div></div>` : ''}
+      <div class="detail-row"><div class="detail-row-label">Contact 1</div><div class="detail-row-value">
+        ${o.contact1Name}<br>
+        ${o.contact1Phone ? `<a href="tel:${o.contact1Phone}">${o.contact1Phone}</a>` : ''}
+        ${o.contact1Phone && o.contact1Email ? ' · ' : ''}
+        ${o.contact1Email ? `<a href="mailto:${o.contact1Email}">${o.contact1Email}</a>` : ''}
+      </div></div>
+      ${o.contact2Name ? `<div class="detail-row"><div class="detail-row-label">Contact 2</div><div class="detail-row-value">
+        ${o.contact2Name}<br>
+        ${o.contact2Phone ? `<a href="tel:${o.contact2Phone}">${o.contact2Phone}</a>` : ''}
+        ${o.contact2Email ? `<a href="mailto:${o.contact2Email}">${o.contact2Email}</a>` : ''}
+      </div></div>` : ''}
+    </div>
+
+    ${o.invoiceNum || o.paymentStatus !== 'Unpaid – Invoice Not Sent' ? `
+    <div class="detail-section">
+      <div class="detail-section-header"><span>💰</span><span class="detail-section-title">Invoice & Payment</span></div>
+      ${o.invoiceNum ? `<div class="detail-row"><div class="detail-row-label">Invoice #</div><div class="detail-row-value" style="font-family:var(--font-mono)">${o.invoiceNum}</div></div>` : ''}
+      ${o.invoiceDate ? `<div class="detail-row"><div class="detail-row-label">Invoice Date</div><div class="detail-row-value">${o.invoiceDate}</div></div>` : ''}
+      <div class="detail-row"><div class="detail-row-label">Payment Status</div><div class="detail-row-value"><span class="badge ${paymentBadgeClass(o.paymentStatus)}">${o.paymentStatus}</span></div></div>
+      ${o.paymentDate ? `<div class="detail-row"><div class="detail-row-label">Payment Date</div><div class="detail-row-value">${o.paymentDate}</div></div>` : ''}
+    </div>` : ''}
+
+    <div class="detail-section">
+      <div class="detail-section-header"><span>📝</span><span class="detail-section-title">Notes</span></div>
+      <div class="notes-area">
+        <textarea class="notes-textarea" id="detail-notes" placeholder="Add notes here…">${o.notes||''}</textarea>
+        <button class="btn-save-note" onclick="saveNote(${o.id})">Save Note</button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-header"><span>🕐</span><span class="detail-section-title">Activity Log</span></div>
+      ${o.activities.map(a => `
+        <div class="activity-item">
+          <div class="activity-dot" style="background:${a.type==='system'?'var(--gold)':a.type==='auto'?'var(--blue)':'var(--green)'}"></div>
+          <div>
+            <div class="activity-text">${a.text}</div>
+            <div class="activity-time">${a.time}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+function saveNote(orderId) {
+  const o = orders.find(x => x.id == orderId);
+  if (!o) return;
+  o.notes = document.getElementById('detail-notes').value;
+  o.activities.push({
+    text: 'Note added by broker',
+    time: new Date().toLocaleString(),
+    type: 'broker'
+  });
+  showToast('Note saved ✓');
+}
+
+// ── RESOURCES ────────────────────────────────────────────────
+function renderResources() {
+  document.getElementById('view-resources').innerHTML = `
+    <div class="page-header">
+      <div class="page-title">Resources</div>
+      <div class="page-subtitle">Help guides and contact information</div>
+    </div>
+
+    <a class="resource-card" href="https://www.youtube.com/@principleappraisals" target="_blank">
+      <div class="resource-icon">▶️</div>
+      <div class="resource-body">
+        <div class="resource-title">How to Prepare Your Client for an Appraisal</div>
+        <div class="resource-desc">Video guide — what homeowners need to know before the visit</div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="#" onclick="alert('Lender requirements guide — add your PDF link here.')">
+      <div class="resource-icon">🏦</div>
+      <div class="resource-body">
+        <div class="resource-title">Lender Requirements by Institution</div>
+        <div class="resource-desc">TD, RBC, CIBC, BMO, Equitable, Manulife and more</div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="#" onclick="alert('Process guide — add your content here.')">
+      <div class="resource-icon">📖</div>
+      <div class="resource-body">
+        <div class="resource-title">How the Appraisal Process Works</div>
+        <div class="resource-desc">Step-by-step overview for brokers and clients</div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="#" onclick="alert('Service area map — connect Google Maps here.')">
+      <div class="resource-icon">📍</div>
+      <div class="resource-body">
+        <div class="resource-title">Our Service Areas</div>
+        <div class="resource-desc">View the regions actively serviced by Principle Appraisals</div>
+      </div>
+    </a>
+
+    <div class="setup-card">
+      <div class="setup-title">⚙️ Connect to Google Sheets</div>
+      <div class="setup-desc">Paste your Google Apps Script Web App URL below to enable live data sync. New orders submitted through this portal will automatically appear in your Google Sheet. <a href="#" style="color:var(--navy)">How to get this URL →</a></div>
+      <div class="setup-input-row">
+        <input class="setup-input" id="endpoint-input" type="url"
+          placeholder="https://script.google.com/macros/s/…/exec"
+          value="${sheetsEndpoint}">
+        <button class="btn-setup" onclick="saveEndpoint()">Save</button>
+      </div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-card-title">Contact Principle Appraisals</div>
+      <div class="contact-row">
+        <span class="contact-icon">📞</span>
+        <a class="contact-link" href="tel:+15195550000">519-555-0000</a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">📧</span>
+        <a class="contact-link" href="mailto:info@principleappraisals.ca">info@principleappraisals.ca</a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">🌐</span>
+        <a class="contact-link" href="https://www.principleappraisals.ca" target="_blank">principleappraisals.ca</a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">📺</span>
+        <a class="contact-link" href="https://youtube.com" target="_blank">YouTube</a>
+        <span style="color:rgba(255,255,255,.3);margin:0 6px">·</span>
+        <a class="contact-link" href="https://facebook.com" target="_blank">Facebook</a>
+        <span style="color:rgba(255,255,255,.3);margin:0 6px">·</span>
+        <a class="contact-link" href="https://instagram.com" target="_blank">Instagram</a>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.4)">
+        © 2026 Principle Appraisals · London, Ontario
+      </div>
+    </div>
+  `;
+}
+
+function saveEndpoint() {
+  const val = document.getElementById('endpoint-input').value.trim();
+  sheetsEndpoint = val;
+  localStorage.setItem(SHEETS_ENDPOINT_KEY, val);
+  showToast(val ? 'Google Sheets connected ✓' : 'Endpoint cleared');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
